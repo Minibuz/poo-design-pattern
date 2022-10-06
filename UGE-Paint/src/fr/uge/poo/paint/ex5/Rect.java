@@ -11,14 +11,13 @@ public final class Rect implements GraphicElement {
     private final int xCenter;
     private final int yCenter;
 
-    public Rect(int x1, int y1, int width, int height) {
-        this.x1 = x1;
-        this.y1 = y1;
-        this.width = width;
-        this.height = height;
-
-        this.xCenter = x1 + width/2;
-        this.yCenter = y1 + height/2;
+    public Rect(RectBuilder builder) {
+        this.x1 = builder.x1;
+        this.y1 = builder.y1;
+        this.width = builder.width;
+        this.height = builder.height;
+        this.xCenter = builder.xCenter;
+        this.yCenter = builder.yCenter;
     }
 
     @Override
@@ -42,5 +41,31 @@ public final class Rect implements GraphicElement {
                 ", xCenter=" + xCenter +
                 ", yCenter=" + yCenter +
                 '}';
+    }
+
+    public static class RectBuilder {
+        private final int x1;
+        private final int y1;
+        private final int width;
+        private final int height;
+        private int xCenter;
+        private int yCenter;
+
+        public RectBuilder(int x1, int y1, int width, int height) {
+            this.x1 = x1;
+            this.y1 = y1;
+            this.width = width;
+            this.height = height;
+            this.computeCenter();
+        }
+
+        private void computeCenter() {
+            this.xCenter = this.x1 + this.width/2;
+            this.yCenter = this.y1 + this.height/2;
+        }
+
+        public Rect build() {
+            return new Rect(this);
+        }
     }
 }

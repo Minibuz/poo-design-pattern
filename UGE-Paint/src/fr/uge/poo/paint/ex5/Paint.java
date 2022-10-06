@@ -40,7 +40,8 @@ public class Paint {
 
     private static List<GraphicElement> loadFile(Path path) throws IOException {
         try(var lines = Files.lines(path)) {
-            return lines.map(line -> GraphicElement.fromLine(line.split(" "))).toList();
+            GraphicElementFactory factory = new GraphicElementFactory();
+            return lines.map(line -> factory.fromLine(line.split(" "))).toList();
         }
     }
 }
