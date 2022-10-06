@@ -9,8 +9,6 @@ public sealed interface GraphicElement permits Line, Oval, Rect {
      */
     void draw(Graphics2D graphics);
 
-    void draw(Graphics2D graphics, Color color);
-
     /**
      * Compute the distance between the center of the graphic element and the x, y given in argument.
      *

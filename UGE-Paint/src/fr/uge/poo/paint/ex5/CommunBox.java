@@ -9,6 +9,10 @@ public final class CommunBox {
     final int yCenter;
 
     public CommunBox(int x, int y, int width, int height) {
+        if(width<0 || height<0) {
+            throw new IllegalArgumentException();
+        }
+
         this.x = x;
         this.y = y;
         this.width = width;
