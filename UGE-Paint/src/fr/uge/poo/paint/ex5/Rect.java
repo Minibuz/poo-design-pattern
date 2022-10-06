@@ -1,7 +1,5 @@
 package fr.uge.poo.paint.ex5;
 
-import fr.uge.poo.paint.ex5.GraphicElement;
-
 import java.awt.*;
 
 public final class Rect implements GraphicElement {

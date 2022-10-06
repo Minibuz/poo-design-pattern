@@ -3,8 +3,13 @@ package fr.uge.poo.paint.ex5;
 import fr.uge.poo.simplegraphics.SimpleGraphics;
 
 import java.awt.*;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.Comparator;
 import java.util.List;
+
+import static fr.uge.poo.paint.ex5.GraphicElement.fromLine;
 
 public class Drawing {
 
@@ -14,8 +19,14 @@ public class Drawing {
     private final List<GraphicElement> elements;
     private GraphicElement closestFromClick = null;
 
-    public Drawing(List<GraphicElement> elements) {
+    private Drawing(List<GraphicElement> elements) {
         this.elements = elements;
+    }
+
+    public static Drawing loadFile(Path path) throws IOException {
+        try(var lines = Files.lines(path)) {
+            return new Drawing(lines.map(line -> fromLine(line.split(" "))).toList());
+        }
     }
 
     public void display() {
@@ -31,7 +42,8 @@ public class Drawing {
 
     private void callback(SimpleGraphics area, List<GraphicElement> elements, int x, int y) {
         if(closestFromClick != null) {
-            area.render(graphics2D -> closestFromClick.draw(graphics2D, BASE_COLOR));
+            area.clear(Color.WHITE);
+            area.render(graphics2D -> drawAll(graphics2D, elements));
         }
 
         this.closestFromClick = elements.stream()
