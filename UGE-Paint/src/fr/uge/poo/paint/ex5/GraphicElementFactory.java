@@ -15,18 +15,16 @@ public class GraphicElementFactory {
                     Integer.parseInt(tokens[3]),
                     Integer.parseInt(tokens[4]))
                     .build();
-            case "rectangle" -> new Rect.RectBuilder(
-                    Integer.parseInt(tokens[1]),
+            case "rectangle" -> new Rect(
+                    new CommunBox(Integer.parseInt(tokens[1]),
                     Integer.parseInt(tokens[2]),
                     Integer.parseInt(tokens[3]),
-                    Integer.parseInt(tokens[4]))
-                    .build();
-            case "ellipse" -> new Oval.OvalBuilder(
-                    Integer.parseInt(tokens[1]),
+                    Integer.parseInt(tokens[4])));
+            case "ellipse" -> new Oval(
+                    new CommunBox(Integer.parseInt(tokens[1]),
                     Integer.parseInt(tokens[2]),
                     Integer.parseInt(tokens[3]),
-                    Integer.parseInt(tokens[4]))
-                    .build();
+                    Integer.parseInt(tokens[4])));
             default -> throw new DrawingNotImplementException("Type of drawing not supported");
         };
     }
