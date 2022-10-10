@@ -1,4 +1,7 @@
-package fr.uge.poo.paint.ex6;
+package fr.uge.poo.paint.ex7.graphics;
+
+import fr.uge.poo.paint.ex7.GraphicSize;
+import fr.uge.poo.paint.ex7.adapter.LibraryAdapter;
 
 import java.awt.*;
 
@@ -10,10 +13,10 @@ public final class Oval implements GraphicElement {
         this.communBox = box;
     }
 
+
     @Override
-    public void draw(Graphics2D graphics, Color color) {
-        graphics.setColor(color);
-        graphics.drawOval(communBox.x, communBox.y, communBox.width, communBox.height);
+    public void draw(LibraryAdapter library, Color color) {
+        library.drawOval(communBox.x, communBox.y, communBox.width, communBox.height, color);
     }
 
     @Override

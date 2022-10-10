@@ -21,4 +21,9 @@ public final class Rect implements GraphicElement {
          return box.distance(x, y);
     }
 
+    @Override
+    public GraphicSize size() {
+        return box.size();
+    }
+
 }

@@ -1,4 +1,6 @@
-package fr.uge.poo.paint.ex6;
+package fr.uge.poo.paint.ex7.graphics;
+
+import fr.uge.poo.paint.ex7.GraphicSize;
 
 public final class CommunBox {
     final int x;

@@ -1,4 +1,7 @@
-package fr.uge.poo.paint.ex6;
+package fr.uge.poo.paint.ex7.graphics;
+
+import fr.uge.poo.paint.ex7.GraphicSize;
+import fr.uge.poo.paint.ex7.adapter.LibraryAdapter;
 
 import java.awt.*;
 
@@ -23,9 +26,8 @@ public final class Line implements GraphicElement {
     }
 
     @Override
-    public void draw(Graphics2D graphics, Color color) {
-        graphics.setColor(color);
-        graphics.drawLine(x1, y1, x2, y2);
+    public void draw(LibraryAdapter library, Color color) {
+        library.drawLine(x1, y1, x2, y2, color);
     }
 
     @Override

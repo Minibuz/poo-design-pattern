@@ -1,4 +1,7 @@
-package fr.uge.poo.paint.ex6;
+package fr.uge.poo.paint.ex7.graphics;
+
+import fr.uge.poo.paint.ex7.GraphicSize;
+import fr.uge.poo.paint.ex7.adapter.LibraryAdapter;
 
 import java.awt.*;
 
@@ -7,7 +10,7 @@ public sealed interface GraphicElement permits Line, Oval, Rect {
     /**
      * Draw the element
      */
-    void draw(Graphics2D graphics, Color color);
+    void draw(LibraryAdapter library, Color color);
 
     /**
      * Compute the distance between the center of the graphic element and the x, y given in argument.
