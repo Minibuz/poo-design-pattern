@@ -4,7 +4,6 @@ import fr.uge.poo.paint.ex7.adapter.CoolGraphicAdapter;
 import fr.uge.poo.paint.ex7.adapter.LibraryAdapter;
 import fr.uge.poo.paint.ex7.adapter.SimpleGraphicsAdapter;
 import fr.uge.poo.paint.ex7.graphics.GraphicElement;
-import fr.uge.poo.simplegraphics.SimpleGraphics;
 
 import java.awt.*;
 import java.io.IOException;
@@ -16,11 +15,6 @@ import java.util.List;
 import static fr.uge.poo.paint.ex7.graphics.GraphicElement.fromLine;
 
 public final class Drawing {
-
-    private final static Color BASE_COLOR = Color.BLACK;
-    private final static Color HIGHLIGHTED_COLOR = Color.ORANGE;
-    private final static int WIDTH = 500;
-    private final static int HEIGHT = 500;
 
     private final List<GraphicElement> elements;
     private final LibraryAdapter.Library library;

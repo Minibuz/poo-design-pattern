@@ -14,7 +14,7 @@ public class SimpleGraphicsAdapter implements LibraryAdapter {
     private GraphicElement closestFromClick = null;
 
     public SimpleGraphicsAdapter(String title, int width, int height) {
-        this.simpleGraphics = new SimpleGraphics("area", width, height);
+        this.simpleGraphics = new SimpleGraphics(title, width, height);
     }
 
 
