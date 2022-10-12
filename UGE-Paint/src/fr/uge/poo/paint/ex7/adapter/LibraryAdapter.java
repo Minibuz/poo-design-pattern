@@ -1,8 +1,5 @@
 package fr.uge.poo.paint.ex7.adapter;
 
-import fr.uge.poo.coolgraphics.CoolGraphics;
-import fr.uge.poo.paint.ex7.GraphicSize;
-import fr.uge.poo.paint.ex7.graphics.CommunBox;
 import fr.uge.poo.paint.ex7.graphics.GraphicElement;
 
 import java.awt.*;

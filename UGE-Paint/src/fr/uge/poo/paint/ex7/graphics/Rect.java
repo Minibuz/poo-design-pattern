@@ -4,7 +4,6 @@ import fr.uge.poo.paint.ex7.GraphicSize;
 import fr.uge.poo.paint.ex7.adapter.LibraryAdapter;
 
 import java.awt.*;
-import java.util.function.Consumer;
 
 public final class Rect implements GraphicElement {
 
