@@ -52,7 +52,7 @@ public class CoolGraphicAdapter implements LibraryAdapter {
         graphics.waitForMouseEvents((x,y) -> callback(elements, x, y));
     }
 
-    public void callback(List<GraphicElement> elements, int x, int y) {
+    private void callback(List<GraphicElement> elements, int x, int y) {
         if(closestFromClick != null) {
             clear(Color.WHITE);
             drawAll(elements);
