@@ -1,9 +1,6 @@
 package fr.uge.poo.paint.ex7.adapter;
 
-import fr.uge.poo.paint.ex7.graphics.GraphicElement;
-
 import java.awt.*;
-import java.util.List;
 
 public interface LibraryAdapter {
     enum Library {
