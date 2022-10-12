@@ -11,10 +11,13 @@ public class SimpleGraphicsAdapter implements LibraryAdapter {
 
     private final SimpleGraphics simpleGraphics;
 
+    private final List<GraphicElement> elements;
+
     private GraphicElement closestFromClick = null;
 
-    public SimpleGraphicsAdapter(String title, int width, int height) {
+    public SimpleGraphicsAdapter(String title, int width, int height, List<GraphicElement> elements) {
         this.simpleGraphics = new SimpleGraphics(title, width, height);
+        this.elements = elements;
     }
 
 
@@ -48,19 +51,19 @@ public class SimpleGraphicsAdapter implements LibraryAdapter {
     }
 
     @Override
-    public void drawAll(List<GraphicElement> elements) {
+    public void drawAll() {
         elements.forEach(graphicElement -> graphicElement.draw(this, Color.BLACK));
     }
 
     @Override
-    public void waitForMouseEvents(List<GraphicElement> elements) {
-        simpleGraphics.waitForMouseEvents((x, y) -> callback(elements, x, y));
+    public void waitForMouseEvents() {
+        simpleGraphics.waitForMouseEvents(this::callback);
     }
 
-    private void callback(List<GraphicElement> elements, int x, int y) {
+    private void callback(int x, int y) {
         if(closestFromClick != null) {
             clear(Color.WHITE);
-            drawAll(elements);
+            drawAll();
         }
 
         this.closestFromClick = elements.stream()

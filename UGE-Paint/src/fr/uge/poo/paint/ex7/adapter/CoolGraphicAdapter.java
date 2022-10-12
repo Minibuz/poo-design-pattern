@@ -11,10 +11,13 @@ public class CoolGraphicAdapter implements LibraryAdapter {
 
     private final CoolGraphics graphics;
 
+    private final List<GraphicElement> elements;
+
     private GraphicElement closestFromClick = null;
 
-    public CoolGraphicAdapter(String title, int width, int height) {
+    public CoolGraphicAdapter(String title, int width, int height, List<GraphicElement> elements) {
         this.graphics = new CoolGraphics(title, width, height);
+        this.elements = elements;
     }
 
 
@@ -42,20 +45,20 @@ public class CoolGraphicAdapter implements LibraryAdapter {
     }
 
     @Override
-    public void drawAll(List<GraphicElement> elements) {
+    public void drawAll() {
         elements.forEach(
                 element -> element.draw(this, ColorAdapter.asColor(CoolGraphics.ColorPlus.BLACK)));
     }
 
     @Override
-    public void waitForMouseEvents(List<GraphicElement> elements) {
-        graphics.waitForMouseEvents((x,y) -> callback(elements, x, y));
+    public void waitForMouseEvents() {
+        graphics.waitForMouseEvents(this::callback);
     }
 
-    private void callback(List<GraphicElement> elements, int x, int y) {
+    private void callback(int x, int y) {
         if(closestFromClick != null) {
             clear(Color.WHITE);
-            drawAll(elements);
+            drawAll();
         }
 
         this.closestFromClick = elements.stream()

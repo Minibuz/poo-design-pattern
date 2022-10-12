@@ -34,13 +34,13 @@ public final class Drawing {
         GraphicSize maxSize = computeWindowSize();
         LibraryAdapter graphic;
         switch (library) {
-            case simplegraphics -> graphic = new SimpleGraphicsAdapter("area", maxSize.width(), maxSize.height());
-            case coolgraphics -> graphic = new CoolGraphicAdapter("area", maxSize.width(), maxSize.height());
+            case simplegraphics -> graphic = new SimpleGraphicsAdapter("area", maxSize.width(), maxSize.height(), elements);
+            case coolgraphics -> graphic = new CoolGraphicAdapter("area", maxSize.width(), maxSize.height(), elements);
             default -> throw new IllegalArgumentException();
         }
         graphic.clear(Color.WHITE);
-        graphic.drawAll(elements);
-        graphic.waitForMouseEvents(elements);
+        graphic.drawAll();
+        graphic.waitForMouseEvents();
     }
 
     private GraphicSize computeWindowSize() {

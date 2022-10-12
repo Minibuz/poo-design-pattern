@@ -19,7 +19,7 @@ public interface LibraryAdapter {
 
     void drawOval(int x, int y, int width, int height, Color color);
 
-    void drawAll(List<GraphicElement> elements);
+    void drawAll();
 
-    void waitForMouseEvents(List<GraphicElement> elements);
+    void waitForMouseEvents();
 }
