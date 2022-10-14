@@ -32,17 +32,12 @@ public class Paint {
         }
 
         GraphicSize maxSize = draw.computeWindowSize(500, 500);
-        LibraryAdapter lib;
-        switch (libraryUse) {
-            case "simplegraphics" -> {
-                lib = new SimpleGraphicsAdapter("area", maxSize.width(), maxSize.height());
-
-            }
-            case "coolgraphics" -> {
-                lib = new CoolGraphicAdapter("area", maxSize.width(), maxSize.height());
-            }
-            default -> throw new IllegalStateException();
-        }
+        LibraryAdapter lib = switch (libraryUse) {
+            case "simplegraphics" ->
+                new SimpleGraphicsAdapter("area", maxSize.width(), maxSize.height());
+            case "coolgraphics" ->
+                new CoolGraphicAdapter("area", maxSize.width(), maxSize.height());
+        };
         lib.clear(LibraryAdapter.MyColor.White);
         draw.drawAll(lib);
         lib.waitForMouseEvents((x,y) -> draw.onClick(lib, x, y));
