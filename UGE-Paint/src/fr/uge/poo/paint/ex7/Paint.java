@@ -37,6 +37,7 @@ public class Paint {
                 new SimpleGraphicsAdapter("area", maxSize.width(), maxSize.height());
             case "coolgraphics" ->
                 new CoolGraphicAdapter("area", maxSize.width(), maxSize.height());
+            default -> throw new IllegalArgumentException();
         };
         lib.clear(LibraryAdapter.MyColor.White);
         draw.drawAll(lib);
