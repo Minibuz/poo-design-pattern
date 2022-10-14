@@ -35,14 +35,6 @@ public class CoolGraphicAdapter implements LibraryAdapter {
     }
 
     @Override
-    public void drawRect(int x, int y, int width, int height, MyColor color) {
-        graphics.drawLine(x, y, x+width, y, asColor(color));
-        graphics.drawLine(x+width, y, x+width, y+height, asColor(color));
-        graphics.drawLine(x+width, y+height, x, y+height, asColor(color));
-        graphics.drawLine(x, y+height, x, y, asColor(color));
-    }
-
-    @Override
     public void drawOval(int x, int y, int width, int height, MyColor color) {
         graphics.drawEllipse(x, y, width, height, asColor(color));
     }
