@@ -44,9 +44,13 @@ public final class Drawing {
     }
 
     private GraphicSize computeWindowSize() {
-        var sizes = elements.stream().map(GraphicElement::size).toList();
-        var width = sizes.stream().max(Comparator.comparingInt(GraphicSize::width)).orElseThrow();
-        var height = sizes.stream().max(Comparator.comparingInt(GraphicSize::height)).orElseThrow();
-        return new GraphicSize(width.width(), height.height());
+        var size = elements.stream().map(GraphicElement::size).reduce(GraphicSize::Union).orElseGet(() -> new GraphicSize(500, 500));
+        if(size.width() < 500) {
+            size = new GraphicSize(500, size.height());
+        }
+        if(size.height() < 500) {
+            size = new GraphicSize(size.width(), 500);
+        }
+        return size;
     }
 }
