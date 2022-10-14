@@ -26,7 +26,7 @@ public final class Line implements GraphicElement {
     }
 
     @Override
-    public void draw(LibraryAdapter library, Color color) {
+    public void draw(LibraryAdapter library, LibraryAdapter.MyColor color) {
         library.drawLine(x1, y1, x2, y2, color);
     }
 

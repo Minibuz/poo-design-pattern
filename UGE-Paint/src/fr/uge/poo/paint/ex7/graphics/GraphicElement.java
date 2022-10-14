@@ -10,7 +10,7 @@ public sealed interface GraphicElement permits Line, Oval, Rect {
     /**
      * Draw the element
      */
-    void draw(LibraryAdapter library, Color color);
+    void draw(LibraryAdapter library, LibraryAdapter.MyColor color);
 
     /**
      * Compute the distance between the center of the graphic element and the x, y given in argument.

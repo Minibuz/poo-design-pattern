@@ -17,39 +17,44 @@ import static fr.uge.poo.paint.ex7.graphics.GraphicElement.fromLine;
 public final class Drawing {
 
     private final List<GraphicElement> elements;
-    private final LibraryAdapter.Library library;
 
-    private Drawing(List<GraphicElement> elements, LibraryAdapter.Library libraryUsed) {
+    private GraphicElement closestFromClick;
+
+    private Drawing(List<GraphicElement> elements) {
         this.elements = elements;
-        this.library = libraryUsed;
     }
 
-    public static Drawing loadFile(Path path, LibraryAdapter.Library libraryUse) throws IOException {
+    public static Drawing loadFile(Path path) throws IOException {
         try(var lines = Files.lines(path)) {
-            return new Drawing(lines.map(line -> fromLine(line.split(" "))).toList(), libraryUse);
+            return new Drawing(lines.map(line -> fromLine(line.split(" "))).toList());
         }
     }
 
-    public void display() {
-        GraphicSize maxSize = computeWindowSize();
-        LibraryAdapter graphic;
-        switch (library) {
-            case simplegraphics -> graphic = new SimpleGraphicsAdapter("area", maxSize.width(), maxSize.height(), elements);
-            case coolgraphics -> graphic = new CoolGraphicAdapter("area", maxSize.width(), maxSize.height(), elements);
-            default -> throw new IllegalArgumentException();
-        }
-        graphic.clear(Color.WHITE);
-        graphic.drawAll();
-        graphic.waitForMouseEvents();
+    public void drawAll(LibraryAdapter libraryAdapter) {
+        elements.forEach(element ->
+                element.draw(libraryAdapter, LibraryAdapter.MyColor.Black)
+        );
     }
 
-    private GraphicSize computeWindowSize() {
+    public void onClick(LibraryAdapter library, int x, int y) {
+        if(closestFromClick != null) {
+            library.clear(LibraryAdapter.MyColor.White);
+            drawAll(library);
+        }
+
+        this.closestFromClick = elements.stream()
+                .min(Comparator.comparingInt(graphicElement -> graphicElement.distance(x, y)))
+                .orElseThrow();
+        closestFromClick.draw(library, LibraryAdapter.MyColor.Orange);
+    }
+
+    public GraphicSize computeWindowSize(int minWidth, int minHeight) {
         var size = elements.stream().map(GraphicElement::size).reduce(GraphicSize::Union).orElseGet(() -> new GraphicSize(500, 500));
-        if(size.width() < 500) {
-            size = new GraphicSize(500, size.height());
+        if(size.width() < minWidth) {
+            size = new GraphicSize(minWidth, size.height());
         }
-        if(size.height() < 500) {
-            size = new GraphicSize(size.width(), 500);
+        if(size.height() < minHeight) {
+            size = new GraphicSize(size.width(), minHeight);
         }
         return size;
     }

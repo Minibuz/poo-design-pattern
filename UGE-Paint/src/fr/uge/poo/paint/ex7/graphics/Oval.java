@@ -15,7 +15,7 @@ public final class Oval implements GraphicElement {
 
 
     @Override
-    public void draw(LibraryAdapter library, Color color) {
+    public void draw(LibraryAdapter library, LibraryAdapter.MyColor color) {
         library.drawOval(communBox.x, communBox.y, communBox.width, communBox.height, color);
     }
 

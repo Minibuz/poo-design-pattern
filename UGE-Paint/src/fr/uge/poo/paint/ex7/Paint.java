@@ -1,6 +1,8 @@
 package fr.uge.poo.paint.ex7;
 
+import fr.uge.poo.paint.ex7.adapter.CoolGraphicAdapter;
 import fr.uge.poo.paint.ex7.adapter.LibraryAdapter;
+import fr.uge.poo.paint.ex7.adapter.SimpleGraphicsAdapter;
 
 import java.io.IOException;
 import java.nio.file.Paths;
@@ -20,12 +22,30 @@ public class Paint {
             throw new IllegalArgumentException("first arg need to be a file name -" +
                     "file need to be at the root of the project");
         }
-        var path = Paths.get(args[0]);
 
-        var libraryUse = LibraryAdapter.Library.coolgraphics;
+        var path = Paths.get(args[0]);
+        var draw = Drawing.loadFile(path);
+
+        var libraryUse = "coolgraphics";
         if(args.length>1 && "-legacy".equals(args[1])) {
-            libraryUse = LibraryAdapter.Library.simplegraphics;
+            libraryUse = "simplegraphics";
         }
-        Drawing.loadFile(path, libraryUse).display();
+
+        GraphicSize maxSize = draw.computeWindowSize(500, 500);
+        LibraryAdapter lib;
+        switch (libraryUse) {
+            case "simplegraphics" -> {
+                lib = new SimpleGraphicsAdapter("area", maxSize.width(), maxSize.height());
+
+            }
+            case "coolgraphics" -> {
+                lib = new CoolGraphicAdapter("area", maxSize.width(), maxSize.height());
+            }
+            default -> throw new IllegalStateException();
+        }
+        lib.clear(LibraryAdapter.MyColor.White);
+        draw.drawAll(lib);
+        lib.waitForMouseEvents((x,y) -> draw.onClick(lib, x, y));
     }
+
 }

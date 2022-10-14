@@ -14,7 +14,7 @@ public final class Rect implements GraphicElement {
     }
 
     @Override
-    public void draw(LibraryAdapter library, Color color) {
+    public void draw(LibraryAdapter library, LibraryAdapter.MyColor color) {
         library.drawRect(communBox.x, communBox.y, communBox.width, communBox.height, color);
     }
 

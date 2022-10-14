@@ -11,59 +11,44 @@ public class CoolGraphicAdapter implements LibraryAdapter {
 
     private final CoolGraphics graphics;
 
-    private final List<GraphicElement> elements;
+    static CoolGraphics.ColorPlus asColor(MyColor color) {
+        return switch (color) {
+            case Black -> CoolGraphics.ColorPlus.BLACK;
+            case White -> CoolGraphics.ColorPlus.WHITE;
+            case Orange -> CoolGraphics.ColorPlus.ORANGE;
+        };
+    }
 
-    private GraphicElement closestFromClick = null;
-
-    public CoolGraphicAdapter(String title, int width, int height, List<GraphicElement> elements) {
+    public CoolGraphicAdapter(String title, int width, int height) {
         this.graphics = new CoolGraphics(title, width, height);
-        this.elements = elements;
     }
 
 
     @Override
-    public void clear(Color color) {
-        graphics.repaint(ColorAdapter.asColorPlus(color));
+    public void clear(MyColor color) {
+        graphics.repaint(asColor(color));
     }
 
     @Override
-    public void drawLine(int x1, int y1, int x2, int y2, Color color) {
-        graphics.drawLine(x1, y1, x2, y2, ColorAdapter.asColorPlus(color));
+    public void drawLine(int x1, int y1, int x2, int y2, MyColor color) {
+        graphics.drawLine(x1, y1, x2, y2, asColor(color));
     }
 
     @Override
-    public void drawRect(int x, int y, int width, int height, Color color) {
-        graphics.drawLine(x, y, x+width, y, ColorAdapter.asColorPlus(color));
-        graphics.drawLine(x+width, y, x+width, y+height, ColorAdapter.asColorPlus(color));
-        graphics.drawLine(x+width, y+height, x, y+height, ColorAdapter.asColorPlus(color));
-        graphics.drawLine(x, y+height, x, y, ColorAdapter.asColorPlus(color));
+    public void drawRect(int x, int y, int width, int height, MyColor color) {
+        graphics.drawLine(x, y, x+width, y, asColor(color));
+        graphics.drawLine(x+width, y, x+width, y+height, asColor(color));
+        graphics.drawLine(x+width, y+height, x, y+height, asColor(color));
+        graphics.drawLine(x, y+height, x, y, asColor(color));
     }
 
     @Override
-    public void drawOval(int x, int y, int width, int height, Color color) {
-        graphics.drawEllipse(x, y, width, height, ColorAdapter.asColorPlus(color));
+    public void drawOval(int x, int y, int width, int height, MyColor color) {
+        graphics.drawEllipse(x, y, width, height, asColor(color));
     }
 
     @Override
-    public void drawAll() {
-        elements.forEach(
-                element -> element.draw(this, ColorAdapter.asColor(CoolGraphics.ColorPlus.BLACK)));
-    }
-
-    @Override
-    public void waitForMouseEvents() {
-        graphics.waitForMouseEvents(this::callback);
-    }
-
-    private void callback(int x, int y) {
-        if(closestFromClick != null) {
-            clear(Color.WHITE);
-            drawAll();
-        }
-
-        this.closestFromClick = elements.stream()
-                .min(Comparator.comparingInt(graphicElement -> graphicElement.distance(x, y)))
-                .orElseThrow();
-        closestFromClick.draw(this, Color.ORANGE);
+    public void waitForMouseEvents(MouseClickCallBack callback) {
+        graphics.waitForMouseEvents(callback::onClick);
     }
 }
