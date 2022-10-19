@@ -1,12 +1,13 @@
 package fr.uge.poo.ducks;
 
+import java.util.ServiceLoader;
+
 public class DuckFarm {
 
     public static void main(String[] args) {
-        Duck regularDuck = new RegularDuck();
-        Duck rubberDuck = new RubberDuck();
-
-        System.out.println(regularDuck.quack());
-        System.out.println(rubberDuck.quack());
+        ServiceLoader<Duck> serviceLoaderDuck = ServiceLoader.load(fr.uge.poo.ducks.Duck.class);
+        for(Duck duck : serviceLoaderDuck) {
+            System.out.println(duck.quack());
+        }
     }
 }
