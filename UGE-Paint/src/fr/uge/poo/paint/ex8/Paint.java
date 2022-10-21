@@ -1,11 +1,14 @@
 package fr.uge.poo.paint.ex8;
 
-import fr.uge.poo.paint.ex8.adapter.CoolGraphicAdapter;
+import fr.uge.poo.paint.ex8.adapter.CoolGraphicsFactory;
 import fr.uge.poo.paint.ex8.adapter.LibraryAdapter;
+import fr.uge.poo.paint.ex8.adapter.LibraryFactory;
 import fr.uge.poo.paint.ex8.adapter.SimpleGraphicsAdapter;
 
 import java.io.IOException;
 import java.nio.file.Paths;
+import java.util.Optional;
+import java.util.ServiceLoader;
 
 public class Paint {
 
@@ -25,20 +28,24 @@ public class Paint {
 
         var path = Paths.get(args[0]);
         var draw = Drawing.loadFile(path);
+        GraphicSize maxSize = draw.computeWindowSize(500, 500);
 
-        var libraryUse = "coolgraphics";
-        if(args.length>1 && "-legacy".equals(args[1])) {
-            libraryUse = "simplegraphics";
+        Optional<LibraryFactory> libFactory = Optional.empty();
+        ServiceLoader<LibraryFactory> serviceLoaderLibraryFactory = ServiceLoader.load(fr.uge.poo.paint.ex8.adapter.LibraryFactory.class);
+        for(LibraryFactory factory : serviceLoaderLibraryFactory) {
+            System.out.println("yay");
+            libFactory = Optional.of(factory);
         }
 
-        GraphicSize maxSize = draw.computeWindowSize(500, 500);
-        LibraryAdapter lib = switch (libraryUse) {
-            case "simplegraphics" ->
-                new SimpleGraphicsAdapter("area", maxSize.width(), maxSize.height());
-            case "coolgraphics" ->
-                new CoolGraphicAdapter("area", maxSize.width(), maxSize.height());
-            default -> throw new IllegalArgumentException();
-        };
+        CoolGraphicsFactory fac = new CoolGraphicsFactory();
+
+        LibraryAdapter lib = libFactory.isPresent() ?
+            libFactory.get()
+                    .withName("area")
+                    .withWidth(maxSize.width())
+                    .withHeight(maxSize.height())
+                    .make()
+                : new SimpleGraphicsAdapter("area", maxSize.width(), maxSize.height());
         lib.clear(LibraryAdapter.MyColor.White);
         draw.drawAll(lib);
         lib.waitForMouseEvents((x,y) -> draw.onClick(lib, x, y));

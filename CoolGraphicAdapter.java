@@ -1,6 +1,7 @@
 package fr.uge.poo.paint.ex8.adapter;
 
 import fr.uge.poo.coolgraphics.CoolGraphics;
+import fr.uge.poo.paint.ex8.adapter.LibraryAdapter;
 
 public class CoolGraphicAdapter implements LibraryAdapter {
 
@@ -12,6 +13,10 @@ public class CoolGraphicAdapter implements LibraryAdapter {
             case White -> CoolGraphics.ColorPlus.WHITE;
             case Orange -> CoolGraphics.ColorPlus.ORANGE;
         };
+    }
+
+    public CoolGraphicAdapter() {
+        this.graphics = new CoolGraphics("area", 500, 500);
     }
 
     public CoolGraphicAdapter(String title, int width, int height) {
