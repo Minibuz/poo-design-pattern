@@ -2,7 +2,7 @@
 build_dir="./tmp_build"
 src_dir="./src"
 jarname="CoolGraphics.jar"
-interface_provided="fr.uge.poo.paint.ex8.adapter.LibraryAdapterFactory.java"
+interface_provided="fr.uge.poo.paint.ex8.adapter.LibraryFactory"
 class_providing_the_interface="fr.uge.poo.paint.ex8.adapter.CoolGraphicsFactory"
 included_classes=("fr.uge.poo.paint.ex8.adapter.LibraryAdapter" "fr.uge.poo.paint.ex8.adapter.CoolGraphicsAdapter" "$interface_provided" "$class_providing_the_interface")
 

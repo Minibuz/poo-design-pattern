@@ -1,9 +1,6 @@
 package fr.uge.poo.paint.ex8;
 
-import fr.uge.poo.paint.ex8.adapter.CoolGraphicsFactory;
-import fr.uge.poo.paint.ex8.adapter.LibraryAdapter;
-import fr.uge.poo.paint.ex8.adapter.LibraryFactory;
-import fr.uge.poo.paint.ex8.adapter.SimpleGraphicsAdapter;
+import fr.uge.poo.paint.ex8.adapter.*;
 
 import java.io.IOException;
 import java.nio.file.Paths;
@@ -36,8 +33,6 @@ public class Paint {
             System.out.println("yay");
             libFactory = Optional.of(factory);
         }
-
-        CoolGraphicsFactory fac = new CoolGraphicsFactory();
 
         LibraryAdapter lib = libFactory.isPresent() ?
             libFactory.get()
