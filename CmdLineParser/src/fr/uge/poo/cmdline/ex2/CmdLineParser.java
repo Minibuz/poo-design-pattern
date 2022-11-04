@@ -11,8 +11,8 @@ public class CmdLineParser {
         Objects.requireNonNull(option);
         Objects.requireNonNull(runnable);
 
-        var run = Optional.ofNullable(registeredOptions.putIfAbsent(option, it -> runnable.run()));
-        if(run.isPresent()) {
+        Consumer<Iterator<String>> value = registeredOptions.putIfAbsent(option, it -> runnable.run());
+        if( value != null ) {
             throw new IllegalStateException("Option is already set in the options");
         }
     }
@@ -21,14 +21,14 @@ public class CmdLineParser {
         Objects.requireNonNull(option);
         Objects.requireNonNull(consumer);
 
-        var run = Optional.ofNullable(registeredOptions.putIfAbsent(option, it -> {
+        Consumer<Iterator<String>> value = registeredOptions.putIfAbsent(option, it -> {
             if(it.hasNext()) {
                 consumer.accept(it.next());
             } else {
                 throw new NoParameterGiven(option + " need at least one parameter");
             }
-        }));
-        if(run.isPresent()) {
+        });
+        if( value != null ) {
             throw new IllegalStateException("Option is already set in the options");
         }
     }
@@ -36,13 +36,13 @@ public class CmdLineParser {
     public List<String> process(String[] arguments) {
         ArrayList<String> files = new ArrayList<>();
 
-        var iterator = Arrays.stream(arguments).iterator();
+        Iterator<String> iterator = Arrays.stream(arguments).iterator();
         while(iterator.hasNext()) {
             var argument = iterator.next();
-            var optional = Optional.ofNullable(registeredOptions.get(argument));
-            if (optional.isPresent()) {
-                var optionsValues = optional.get();
-                optionsValues.accept(iterator);
+
+            var consumer = registeredOptions.get(argument);
+            if (consumer != null) {
+                consumer.accept(iterator);
             } else {
                 files.add(argument);
             }
