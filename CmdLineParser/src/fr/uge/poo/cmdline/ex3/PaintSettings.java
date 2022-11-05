@@ -20,4 +20,45 @@ public class PaintSettings {
         this.height = height;
         this.address = address;
     }
+
+    public String getName() {
+        return name;
+    }
+
+    public boolean isLegacy() {
+        return legacy;
+    }
+
+    public boolean isBordered() {
+        return bordered;
+    }
+
+    public int getBorderSize() {
+        return borderSize;
+    }
+
+    public int getWidth() {
+        return width;
+    }
+
+    public int getHeight() {
+        return height;
+    }
+
+    public InetSocketAddress getAddress() {
+        return address;
+    }
+
+    @Override
+    public String toString() {
+        return "PaintSettings{" +
+                "name='" + name + '\'' +
+                ", legacy=" + legacy +
+                ", bordered=" + bordered +
+                ", borderSize=" + borderSize +
+                ", width=" + width +
+                ", height=" + height +
+                ", address=" + address +
+                '}';
+    }
 }

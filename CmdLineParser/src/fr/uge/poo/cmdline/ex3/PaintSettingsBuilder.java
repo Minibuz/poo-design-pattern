@@ -48,6 +48,9 @@ public class PaintSettingsBuilder {
     }
 
     public PaintSettings build() {
+        if(!bordered) {
+            borderSize = 0;
+        }
         return new PaintSettings(name, legacy, bordered, borderSize, width, height, address);
     }
 }
