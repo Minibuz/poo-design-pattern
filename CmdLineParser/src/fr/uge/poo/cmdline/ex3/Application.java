@@ -5,8 +5,8 @@ import java.util.List;
 
 public class Application {
 
-    public static void main(String[] args) throws NoParameterGiven {
-        var optionBuilder = new PaintSettingsBuilder("paint");
+    public static void main(String[] args) throws NoParameterGivenException {
+        var optionBuilder = new PaintSettings.PaintSettingsBuilder("paint");
         String[] arguments={"-legacy","-no-borders","filename1","filename2"};
         var cmdParser = new CmdLineParser();
         cmdParser.registerOption("-legacy", () -> optionBuilder.withLegacy(true));

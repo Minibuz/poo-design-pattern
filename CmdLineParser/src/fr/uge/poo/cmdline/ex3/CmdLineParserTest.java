@@ -182,6 +182,6 @@ public class CmdLineParserTest {
 
         String[] arguments={"-other"};
 
-        assertThrows(NoParameterGiven.class, () -> cmdParser.process(arguments));
+        assertThrows(NoParameterGivenException.class, () -> cmdParser.process(arguments));
     }
 }

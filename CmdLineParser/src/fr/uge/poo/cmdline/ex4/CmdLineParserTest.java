@@ -183,7 +183,7 @@ public class CmdLineParserTest {
 
         String[] arguments={"-other"};
 
-        assertThrows(NoParameterGiven.class, () -> cmdParser.process(Arrays.stream(arguments).toList()));
+        assertThrows(NoParameterGivenException.class, () -> cmdParser.process(Arrays.stream(arguments).toList()));
     }
 
     @Test
@@ -196,6 +196,6 @@ public class CmdLineParserTest {
 
         String[] arguments={"-other"};
 
-        assertThrows(NoParameterGiven.class, () -> cmdParser.process(Arrays.stream(arguments).toList()));
+        assertThrows(NoParameterGivenException.class, () -> cmdParser.process(Arrays.stream(arguments).toList()));
     }
 }

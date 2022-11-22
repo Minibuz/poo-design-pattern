@@ -25,7 +25,7 @@ public class CmdLineParser {
             if(it.hasNext()) {
                 consumer.accept(it.next());
             } else {
-                throw new NoParameterGiven(option + " need at least one parameter");
+                throw new NoParameterGivenException(option + " need at least one parameter");
             }
         });
         if( value != null ) {

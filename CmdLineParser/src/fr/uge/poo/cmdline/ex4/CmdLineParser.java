@@ -64,15 +64,15 @@ public class CmdLineParser {
                 }
             } else {
                 if( argument.startsWith("-") ) {
-                    throw new NoParameterGiven(argument + " should be specified as an option");
+                    throw new NoParameterGivenException(argument + " should be specified as an option");
                 }
                 files.add(argument);
             }
         }
         if(!foundOption.equals(requiredOption)) {
-            throw new NoParameterGiven("No obligatory option found");
+            throw new NoParameterGivenException("No obligatory option found");
         }
-        foundOption.removeAll(foundOption);
+        foundOption.clear();
         return files;
     }
 }

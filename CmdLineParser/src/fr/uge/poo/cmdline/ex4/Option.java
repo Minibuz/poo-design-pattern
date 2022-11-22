@@ -1,7 +1,5 @@
 package fr.uge.poo.cmdline.ex4;
 
-import fr.uge.poo.cmdline.ex3.options.OptionBuilder;
-
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
@@ -55,28 +53,28 @@ public class Option {
                 if (iterator.hasNext()) {
                     var value = iterator.next();
                     if (value.startsWith("-")) {
-                        throw new NoParameterGiven(value + " is not a parameter but an option");
+                        throw new NoParameterGivenException(value + " is not a parameter but an option");
                     }
                     action.accept(value);
                 } else {
-                    throw new NoParameterGiven("Need at least one parameter");
+                    throw new NoParameterGivenException("Need at least one parameter");
                 }
             });
             return this;
         }
 
         public OptionBuilder withParameters(Consumer<List<String>> action, int arguments) {
-            this.action= (iterator -> {
+            this.action = (iterator -> {
                 List<String> args = new ArrayList<>();
                 for(int i = 0; i<arguments; i++) {
                     if (iterator.hasNext()) {
                         var value = iterator.next();
                         if (value.startsWith("-")) {
-                            throw new NoParameterGiven(value + " is not a parameter but an option");
+                            throw new NoParameterGivenException(value + " is not a parameter but an option");
                         }
                         args.add(value);
                     } else {
-                        throw new NoParameterGiven( "Not enough arguments");
+                        throw new NoParameterGivenException( "Not enough arguments");
                     }
                 }
                 action.accept(args);
