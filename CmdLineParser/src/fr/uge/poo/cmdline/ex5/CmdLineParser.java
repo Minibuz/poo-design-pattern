@@ -1,4 +1,4 @@
-package fr.uge.poo.cmdline.ex4;
+package fr.uge.poo.cmdline.ex5;
 
 import java.util.*;
 import java.util.function.Consumer;
@@ -6,8 +6,8 @@ import java.util.function.Consumer;
 public class CmdLineParser {
 
     private final HashMap<String, Option> registeredOptions = new HashMap<>();
-    private final HashSet<String> requiredOption = new HashSet<>();
-    private final HashSet<String> foundOption = new HashSet<>();
+    private final HashSet<Option> requiredOption = new HashSet<>();
+    private final HashSet<Option> foundOption = new HashSet<>();
 
     public void addFlag(String option, Runnable runnable) {
         Objects.requireNonNull(option);
@@ -19,7 +19,7 @@ public class CmdLineParser {
             throw new IllegalStateException("Option is already set in the options");
         }
         if( op.isRequired() ) {
-            requiredOption.add(option);
+            requiredOption.add(op);
         }
     }
 
@@ -33,20 +33,22 @@ public class CmdLineParser {
             throw new IllegalStateException("Option is already set in the options");
         }
         if( op.isRequired() ) {
-            requiredOption.add(option);
+            requiredOption.add(op);
         }
     }
 
-    public void addOptionWithParameters(String option, Consumer<List<String>> consumer, int numberOfArgs) {
+    public void addOptionWithParameters(Option option) {
         Objects.requireNonNull(option);
-        Objects.requireNonNull(consumer);
 
-        Option op = new Option.OptionBuilder(option, consumer, numberOfArgs).build();
-        var optInMap = registeredOptions.putIfAbsent(option, op);
-        if (optInMap != null) {
-            throw new IllegalStateException("Option is already set in the options");
-        }
-        if( op.isRequired() ) {
+        var allNames = option.getAliases();
+        allNames.add(option.getName());
+        allNames.forEach(str -> {
+            var optInMap = registeredOptions.putIfAbsent(option.getName(), option);
+            if (optInMap != null) {
+                throw new IllegalStateException("Option is already set in the options");
+            }
+        });
+        if( option.isRequired() ) {
             requiredOption.add(option);
         }
     }
@@ -59,10 +61,13 @@ public class CmdLineParser {
             var argument = iterator.next();
 
             var option = registeredOptions.get(argument);
+            if( foundOption.contains(option) ) {
+                throw new IllegalArgumentException("Already called that option");
+            }
             if (option != null) {
                 option.getAction().accept(iterator);
                 if ( option.isRequired() ) {
-                    foundOption.add(option.getName());
+                    foundOption.add(option);
                 }
             } else {
                 if( argument.startsWith("-") ) {
@@ -76,5 +81,13 @@ public class CmdLineParser {
         }
         foundOption.clear();
         return files;
+    }
+
+    public void usage() {
+        var options = registeredOptions.values();
+        options.stream()
+                .distinct()
+                .sorted(Comparator.comparing(Option::getName))
+                .forEachOrdered(opt -> System.out.println(opt.getDocumentation()));
     }
 }
