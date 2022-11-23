@@ -5,6 +5,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Objects;
 import java.util.function.Consumer;
+import java.util.function.IntConsumer;
 
 public class Option {
 
@@ -50,6 +51,9 @@ public class Option {
         private String documentation;
 
         public OptionBuilder(String name, Consumer<List<String>> action, int arguments) {
+            Objects.requireNonNull(name);
+            Objects.requireNonNull(action);
+
             this.name = name;
             this.action = (iterator -> {
                 List<String> args = new ArrayList<>();
@@ -88,5 +92,19 @@ public class Option {
         public Option build() {
             return new Option(this);
         }
+    }
+
+    static public Option.OptionBuilder IntOptionBuilder(String name, IntConsumer action) {
+        return new OptionBuilder(name, l -> {
+            if(l.size() != 1) {
+                throw new NoParameterGivenException("No parameters");
+            }
+            try {
+                var number = Integer.parseInt(l.get(0));
+                action.accept(number);
+            } catch (NumberFormatException e) {
+                throw new NoParameterGivenException("Not an int");
+            }
+        }, 1);
     }
 }
