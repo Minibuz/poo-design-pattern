@@ -15,12 +15,12 @@ public class Option {
     private String documentation;
     private boolean required;
 
-    private Option(OptionBuilder optionBuilder) {
-        this.name = optionBuilder.name;
-        this.action = optionBuilder.action;
-        this.required = optionBuilder.required;
-        this.aliases = optionBuilder.aliases;
-        this.documentation = optionBuilder.documentation;
+    private Option(Builder builder) {
+        this.name = builder.name;
+        this.action = builder.action;
+        this.required = builder.required;
+        this.aliases = builder.aliases;
+        this.documentation = builder.documentation;
     }
 
     public String getName() {
@@ -43,14 +43,14 @@ public class Option {
         return required;
     }
 
-    public static class OptionBuilder {
+    public static class Builder {
         private String name;
         private boolean required = false;
         private Consumer<Iterator<String>> action;
         private List<String> aliases = new ArrayList<>();
         private String documentation;
 
-        public OptionBuilder(String name, Consumer<List<String>> action, int arguments) {
+        public Builder(String name, Consumer<List<String>> action, int arguments) {
             Objects.requireNonNull(name);
             Objects.requireNonNull(action);
 
@@ -72,18 +72,18 @@ public class Option {
             });
         }
 
-        public OptionBuilder required() {
+        public Builder required() {
             this.required = true;
             return this;
         }
 
-        public OptionBuilder alias(String name) {
+        public Builder alias(String name) {
             Objects.requireNonNull(name);
             aliases.add(name);
             return this;
         }
 
-        public OptionBuilder documentation(String documentation) {
+        public Builder documentation(String documentation) {
             Objects.requireNonNull(documentation);
             this.documentation = documentation;
             return this;
@@ -94,8 +94,8 @@ public class Option {
         }
     }
 
-    static public Option.OptionBuilder IntOptionBuilder(String name, IntConsumer action) {
-        return new OptionBuilder(name, l -> {
+    static public Builder IntOptionBuilder(String name, IntConsumer action) {
+        return new Builder(name, l -> {
             if(l.size() != 1) {
                 throw new NoParameterGivenException("No parameters");
             }

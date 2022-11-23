@@ -13,7 +13,7 @@ public class CmdLineParser {
         Objects.requireNonNull(option);
         Objects.requireNonNull(runnable);
 
-        Option op = new Option.OptionBuilder(option, list -> runnable.run(), 0).build();
+        Option op = new Option.Builder(option, list -> runnable.run(), 0).build();
         var optInMap = registeredOptions.putIfAbsent(option, op);
         if( optInMap != null ) {
             throw new IllegalStateException("Option is already set in the options");
@@ -27,7 +27,7 @@ public class CmdLineParser {
         Objects.requireNonNull(option);
         Objects.requireNonNull(consumer);
 
-        Option op = new Option.OptionBuilder(option, list -> consumer.accept(list.get(0)), 1).build();
+        Option op = new Option.Builder(option, list -> consumer.accept(list.get(0)), 1).build();
         var optInMap = registeredOptions.putIfAbsent(option, op);
         if (optInMap != null) {
             throw new IllegalStateException("Option is already set in the options");
