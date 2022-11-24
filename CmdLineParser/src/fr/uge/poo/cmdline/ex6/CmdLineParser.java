@@ -1,9 +1,69 @@
-package fr.uge.poo.cmdline.ex5;
+package fr.uge.poo.cmdline.ex6;
 
 import java.util.*;
 import java.util.function.Consumer;
 
 public class CmdLineParser {
+
+    private interface OptionObserver {
+        void onRegister(OptionsManager optM, Option option);
+        void onProcess(OptionsManager optM, Option option);
+        void onFinish(OptionsManager optM);
+    }
+
+    private static class RequiredObserver implements OptionObserver {
+
+        @Override
+        public void onRegister(OptionsManager optM, Option option) {
+
+        }
+
+        @Override
+        public void onProcess(OptionsManager optM, Option option) {
+
+        }
+
+        @Override
+        public void onFinish(OptionsManager optM) {
+
+        }
+    }
+
+    private static class ConflictObserver implements OptionObserver {
+
+        @Override
+        public void onRegister(OptionsManager optM, Option option) {
+
+        }
+
+        @Override
+        public void onProcess(OptionsManager optM, Option option) {
+
+        }
+
+        @Override
+        public void onFinish(OptionsManager optM) {
+
+        }
+    }
+
+    private static class FoundObserver implements OptionObserver {
+
+        @Override
+        public void onRegister(OptionsManager optM, Option option) {
+
+        }
+
+        @Override
+        public void onProcess(OptionsManager optM, Option option) {
+
+        }
+
+        @Override
+        public void onFinish(OptionsManager optM) {
+
+        }
+    }
 
     private final HashMap<String, Option> registeredOptions = new HashMap<>();
     private final HashSet<Option> requiredOption = new HashSet<>();

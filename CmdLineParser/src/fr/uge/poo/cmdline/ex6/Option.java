@@ -1,4 +1,4 @@
-package fr.uge.poo.cmdline.ex5;
+package fr.uge.poo.cmdline.ex6;
 
 import java.util.ArrayList;
 import java.util.Iterator;
