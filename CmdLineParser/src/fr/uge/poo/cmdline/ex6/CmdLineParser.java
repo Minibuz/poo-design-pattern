@@ -220,7 +220,7 @@ public class CmdLineParser {
 
         @Override
         public void onRegisteredOption(OptionsManager optionsManager, Option option) {
-
+            // Do nothing
         }
 
         @Override
@@ -245,7 +245,7 @@ public class CmdLineParser {
 
         @Override
         public void onFinishedProcess(OptionsManager optionsManager) {
-
+            // Do nothing
         }
     }
 
@@ -260,12 +260,12 @@ public class CmdLineParser {
 
         @Override
         public void onProcessedOption(OptionsManager optionsManager, Option option) {
-
+            // Do nothing
         }
 
         @Override
         public void onFinishedProcess(OptionsManager optionsManager) {
-
+            // Do nothing
         }
 
         public void usage() {
