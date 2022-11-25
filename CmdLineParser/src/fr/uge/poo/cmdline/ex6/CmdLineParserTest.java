@@ -7,7 +7,7 @@ import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-public class CmdLineParserTest {
+class CmdLineParserTest {
 
     @Test
     void registerNullTest() {
@@ -200,7 +200,7 @@ public class CmdLineParserTest {
     }
 
     @Test
-    public void processRequiredOption() {
+    void processRequiredOption() {
         var cmdParser = new CmdLineParser();
         var option= new CmdLineParser.Option.Builder("-test",0, l->{}).required().build();
         cmdParser.addOption(option);
@@ -210,7 +210,7 @@ public class CmdLineParserTest {
     }
 
     @Test
-    public void processConflicts() {
+    void processConflicts() {
         var cmdParser = new CmdLineParser();
         var option= new CmdLineParser.Option.Builder("-test",0, l->{}).conflictWith("-test1").build();
         cmdParser.addOption(option);
@@ -221,7 +221,7 @@ public class CmdLineParserTest {
     }
 
     @Test
-    public void processConflicts2() {
+    void processConflicts2() {
         var cmdParser = new CmdLineParser();
         var option= new CmdLineParser.Option.Builder("-test",0, l->{}).conflictWith("-test1").build();
         cmdParser.addOption(option);
@@ -232,7 +232,7 @@ public class CmdLineParserTest {
     }
 
     @Test
-    public void processConflictsAndAliases() {
+    void processConflictsAndAliases() {
         var cmdParser = new CmdLineParser();
         var option= new CmdLineParser.Option.Builder("-test",0, l->{}).conflictWith("-test2").build();
         cmdParser.addOption(option);
@@ -243,7 +243,7 @@ public class CmdLineParserTest {
     }
 
     @Test
-    public void processConflictsAndAliases2() {
+    void processConflictsAndAliases2() {
         var cmdParser = new CmdLineParser();
         var option= new CmdLineParser.Option.Builder("-test",0, l->{}).conflictWith("-test2").build();
         cmdParser.addOption(option);
