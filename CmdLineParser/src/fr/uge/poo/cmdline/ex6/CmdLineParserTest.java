@@ -198,4 +198,58 @@ public class CmdLineParserTest {
 
         assertThrows(NoParameterGivenException.class, () -> cmdParser.process(Arrays.stream(arguments).toList()));
     }
+
+    @Test
+    public void processRequiredOption() {
+        var cmdParser = new CmdLineParser();
+        var option= new CmdLineParser.Option.Builder("-test",0, l->{}).required().build();
+        cmdParser.addOption(option);
+        cmdParser.addFlag("-test1",() -> {});
+        String[] arguments = {"-test1","a","b"};
+        assertThrows(NoParameterGivenException.class,()->{cmdParser.process(List.of(arguments));});
+    }
+
+    @Test
+    public void processConflicts() {
+        var cmdParser = new CmdLineParser();
+        var option= new CmdLineParser.Option.Builder("-test",0, l->{}).conflictWith("-test1").build();
+        cmdParser.addOption(option);
+        var option2= new CmdLineParser.Option.Builder("-test1",0, l->{}).build();
+        cmdParser.addOption(option2);
+        String[] arguments = {"-test","-test1"};
+        assertThrows(NoParameterGivenException.class,()->{cmdParser.process(List.of(arguments));});
+    }
+
+    @Test
+    public void processConflicts2() {
+        var cmdParser = new CmdLineParser();
+        var option= new CmdLineParser.Option.Builder("-test",0, l->{}).conflictWith("-test1").build();
+        cmdParser.addOption(option);
+        var option2= new CmdLineParser.Option.Builder("-test1",0, l->{}).build();
+        cmdParser.addOption(option2);
+        String[] arguments = {"-test1","-test"};
+        assertThrows(NoParameterGivenException.class,()->{cmdParser.process(List.of(arguments));});
+    }
+
+    @Test
+    public void processConflictsAndAliases() {
+        var cmdParser = new CmdLineParser();
+        var option= new CmdLineParser.Option.Builder("-test",0, l->{}).conflictWith("-test2").build();
+        cmdParser.addOption(option);
+        var option2= new CmdLineParser.Option.Builder("-test1",0, l->{}).alias("-test2").build();
+        cmdParser.addOption(option2);
+        String[] arguments = {"-test1","-test"};
+        assertThrows(NoParameterGivenException.class,()->{cmdParser.process(List.of(arguments));});
+    }
+
+    @Test
+    public void processConflictsAndAliases2() {
+        var cmdParser = new CmdLineParser();
+        var option= new CmdLineParser.Option.Builder("-test",0, l->{}).conflictWith("-test2").build();
+        cmdParser.addOption(option);
+        var option2= new CmdLineParser.Option.Builder("-test1",0, l->{}).alias("-test2").build();
+        cmdParser.addOption(option2);
+        String[] arguments = {"-test","-test1"};
+        assertThrows(NoParameterGivenException.class,()->{cmdParser.process(List.of(arguments));});
+    }
 }
