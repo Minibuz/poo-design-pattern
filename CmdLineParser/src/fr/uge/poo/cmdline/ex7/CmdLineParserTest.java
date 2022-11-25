@@ -2,6 +2,7 @@ package fr.uge.poo.cmdline.ex7;
 
 import org.junit.jupiter.api.Test;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
@@ -183,7 +184,7 @@ public class CmdLineParserTest {
 
         String[] arguments={"-other"};
 
-        assertThrows(NoParameterGivenException.class, () -> cmdParser.process(Arrays.stream(arguments).toList()));
+        assertThrows(ParseException.class, () -> cmdParser.process(Arrays.stream(arguments).toList()));
     }
 
     @Test
@@ -196,7 +197,7 @@ public class CmdLineParserTest {
 
         String[] arguments={"-other"};
 
-        assertThrows(NoParameterGivenException.class, () -> cmdParser.process(Arrays.stream(arguments).toList()));
+        assertThrows(ParseException.class, () -> cmdParser.process(Arrays.stream(arguments).toList()));
     }
 
     @Test
@@ -206,7 +207,7 @@ public class CmdLineParserTest {
         cmdParser.addOption(option);
         cmdParser.addFlag("-test1",() -> {});
         String[] arguments = {"-test1","a","b"};
-        assertThrows(NoParameterGivenException.class,()->{cmdParser.process(List.of(arguments));});
+        assertThrows(ParseException.class,()->{cmdParser.process(List.of(arguments));});
     }
 
     @Test
@@ -217,7 +218,7 @@ public class CmdLineParserTest {
         var option2= new CmdLineParser.Option.Builder("-test1",0, l->{}).build();
         cmdParser.addOption(option2);
         String[] arguments = {"-test","-test1"};
-        assertThrows(NoParameterGivenException.class,()->{cmdParser.process(List.of(arguments));});
+        assertThrows(ParseException.class,()->{cmdParser.process(List.of(arguments));});
     }
 
     @Test
@@ -228,7 +229,7 @@ public class CmdLineParserTest {
         var option2= new CmdLineParser.Option.Builder("-test1",0, l->{}).build();
         cmdParser.addOption(option2);
         String[] arguments = {"-test1","-test"};
-        assertThrows(NoParameterGivenException.class,()->{cmdParser.process(List.of(arguments));});
+        assertThrows(ParseException.class,()->{cmdParser.process(List.of(arguments));});
     }
 
     @Test
@@ -239,7 +240,7 @@ public class CmdLineParserTest {
         var option2= new CmdLineParser.Option.Builder("-test1",0, l->{}).alias("-test2").build();
         cmdParser.addOption(option2);
         String[] arguments = {"-test1","-test"};
-        assertThrows(NoParameterGivenException.class,()->{cmdParser.process(List.of(arguments));});
+        assertThrows(ParseException.class,()->{cmdParser.process(List.of(arguments));});
     }
 
     @Test
@@ -250,6 +251,46 @@ public class CmdLineParserTest {
         var option2= new CmdLineParser.Option.Builder("-test1",0, l->{}).alias("-test2").build();
         cmdParser.addOption(option2);
         String[] arguments = {"-test","-test1"};
-        assertThrows(NoParameterGivenException.class,()->{cmdParser.process(List.of(arguments));});
+        assertThrows(ParseException.class,()->{cmdParser.process(List.of(arguments));});
+    }
+
+    @Test
+    public void processPolicyStandard() {
+        var hosts = new ArrayList<String>();
+        var cmdParser = new CmdLineParser();
+        var optionHosts= new CmdLineParser.Option.Builder("-hosts",2, hosts::addAll).build();
+        cmdParser.addOption(optionHosts);
+        cmdParser.addFlag("-legacy",()->{});
+        String[] arguments = {"-hosts","localhost","-legacy","file"};
+        assertThrows(ParseException.class,()->{cmdParser.process(List.of(arguments),CmdLineParser.STANDARD);});
+    }
+
+    @Test
+    public void processPolicyRelaxed() {
+        var hosts = new ArrayList<String>();
+        var cmdParser = new CmdLineParser();
+        var optionHosts= new CmdLineParser.Option.Builder("-hosts",2, hosts::addAll).build();
+        cmdParser.addOption(optionHosts);
+        cmdParser.addFlag("-legacy",()->{});
+        String[] arguments = {"-hosts","localhost","-legacy","file"};
+        cmdParser.process(List.of(arguments),CmdLineParser.RELAXED);
+        assertEquals(1,hosts.size());
+        assertEquals("localhost",hosts.get(0));
+    }
+
+
+
+    @Test
+    public void processPolicyOldSchool() {
+        var hosts = new ArrayList<String>();
+        var cmdParser = new CmdLineParser();
+        var optionHosts= new CmdLineParser.Option.Builder("-hosts",2, hosts::addAll).build();
+        cmdParser.addOption(optionHosts);
+        cmdParser.addFlag("-legacy",()->{});
+        String[] arguments = {"-hosts","localhost","-legacy","file"};
+        cmdParser.process(List.of(arguments),CmdLineParser.OLDSCHOOL);
+        assertEquals(2,hosts.size());
+        assertEquals("localhost",hosts.get(0));
+        assertEquals("-legacy",hosts.get(1));
     }
 }

@@ -32,7 +32,7 @@ public class Application {
         }
     }
 
-    public static void main(String[] args) throws NoParameterGivenException {
+    public static void main(String[] args) throws ParseException {
         var options = new PaintSettings();
         String[] arguments={"-legacy","-no-borders","filename1","filename2"};
         var cmdParser = new CmdLineParser();

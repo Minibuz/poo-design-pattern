@@ -9,17 +9,17 @@ public class CmdLineParser {
     public static class Option {
 
         private final String name;
-        private final Consumer<Iterator<String>> action;
+        private final int arguments;
+        private final Consumer<List<String>> action;
         private final HashSet<String> aliases;
-
         private final HashSet<String> conflicted;
-
         /// Can be null
         private final String documentation;
         private final boolean required;
 
         private Option(Builder builder) {
             this.name = builder.name;
+            this.arguments = builder.arguments;
             this.action = builder.action;
             this.required = builder.required;
             this.aliases = builder.aliases;
@@ -31,7 +31,9 @@ public class CmdLineParser {
             return name;
         }
 
-        public Consumer<Iterator<String>> getAction() {
+        public int getArguments() { return arguments; }
+
+        public Consumer<List<String>> getAction() {
             return action;
         }
 
@@ -53,8 +55,10 @@ public class CmdLineParser {
 
         public static class Builder {
             private final String name;
+
+            private final int arguments;
             private boolean required = false;
-            private final Consumer<Iterator<String>> action;
+            private final Consumer<List<String>> action;
             private final HashSet<String> aliases = new HashSet<>();
             private String documentation;
 
@@ -62,21 +66,10 @@ public class CmdLineParser {
 
             public Builder(String name, int arguments, Consumer<List<String>> action) {
                 this.name = Objects.requireNonNull(name);
-                this.action = (iterator -> {
-                    List<String> args = new ArrayList<>();
-                    for(int i = 0; i<arguments; i++) {
-                        if (iterator.hasNext()) {
-                            var value = iterator.next();
-                            if (value.startsWith("-")) {
-                                throw new NoParameterGivenException(value + " is not a parameter but an option");
-                            }
-                            args.add(value);
-                        } else {
-                            throw new NoParameterGivenException( "Not enough arguments");
-                        }
-                    }
-                    Objects.requireNonNull(action).accept(args);
+                this.action = (list -> {
+                    Objects.requireNonNull(action).accept(list);
                 });
+                this.arguments = arguments;
             }
 
             public Builder required() {
@@ -107,13 +100,13 @@ public class CmdLineParser {
         static public Builder IntOptionBuilder(String name, IntConsumer action) {
             return new Builder(Objects.requireNonNull(name), 1, l -> {
                 if(l.size() != 1) {
-                    throw new NoParameterGivenException("No parameters");
+                    throw new ParseException("No parameters");
                 }
                 try {
                     var number = Integer.parseInt(l.get(0));
                     Objects.requireNonNull(action).accept(number);
                 } catch (NumberFormatException e) {
-                    throw new NoParameterGivenException("Not an int");
+                    throw new ParseException("Not an int");
                 }
             });
         }
@@ -209,7 +202,7 @@ public class CmdLineParser {
         @Override
         public void onFinishedProcess(OptionsManager optionsManager) {
             if(!foundOptions.containsAll(requiredOptions)) {
-                throw new NoParameterGivenException("Not all required parameters found");
+                throw new ParseException("Not all required parameters found");
             }
         }
     }
@@ -236,7 +229,7 @@ public class CmdLineParser {
                 optNames.add(opt.getName());
 
                 if(conflict.stream().anyMatch(names::contains) || conflicted.stream().anyMatch(optNames::contains)) {
-                    throw new NoParameterGivenException("Conflict");
+                    throw new ParseException("Conflict");
                 }
             });
 
@@ -293,8 +286,56 @@ public class CmdLineParser {
         }
     }
 
+    @FunctionalInterface
+    interface ParameterRetrievalStrategy {
+        List<String> retrieve(Option opt, Iterator<String> iterator);
+    }
+
     private final OptionsManager optionsManager;
     private final DocumentationObserver observer;
+
+    public final static ParameterRetrievalStrategy STANDARD = (option, iterator) -> {
+        List<String> args = new ArrayList<>();
+        for(int i = 0; i<option.getArguments(); i++) {
+            if (iterator.hasNext()) {
+                var value = iterator.next();
+                if (value.startsWith("-")) {
+                    throw new ParseException(value + " is not a parameter but an option");
+                }
+                args.add(value);
+            } else {
+                throw new ParseException( "Not enough arguments");
+            }
+        }
+        return args;
+    };
+    public final static ParameterRetrievalStrategy RELAXED = (option, iterator) -> {
+        List<String> args = new ArrayList<>();
+        for(int i = 0; i<option.getArguments(); i++) {
+            if (iterator.hasNext()) {
+                var value = iterator.next();
+                if (value.startsWith("-")) {
+                    return args;
+                }
+                args.add(value);
+            } else {
+                return args;
+            }
+        }
+        return args;
+    };
+    public final static ParameterRetrievalStrategy OLDSCHOOL = (option, iterator) -> {
+        List<String> args = new ArrayList<>();
+        for(int i = 0; i<option.getArguments(); i++) {
+            if (iterator.hasNext()) {
+                var value = iterator.next();
+                args.add(value);
+            } else {
+                throw new ParseException( "Not enough arguments");
+            }
+        }
+        return args;
+    };
 
     CmdLineParser() {
         this.optionsManager = new OptionsManager();
@@ -336,6 +377,10 @@ public class CmdLineParser {
     }
 
     public List<String> process(List<String> arguments) {
+        return process(arguments, STANDARD);
+    }
+
+    public List<String> process(List<String> arguments, ParameterRetrievalStrategy strategy) {
         ArrayList<String> files = new ArrayList<>();
 
         Iterator<String> iterator = arguments.iterator();
@@ -344,12 +389,12 @@ public class CmdLineParser {
 
             var optOption = optionsManager.processOption(argument);
             if (optOption.isPresent()) {
-                optOption.get()
-                        .getAction()
-                        .accept(iterator);
+                var option = optOption.get();
+                var elements = strategy.retrieve(option, iterator);
+                option.getAction().accept(elements);
             } else {
                 if( argument.startsWith("-") ) {
-                    throw new NoParameterGivenException(argument + " should be specified as an option");
+                    throw new ParseException(argument + " should be specified as an option");
                 }
                 files.add(argument);
             }
