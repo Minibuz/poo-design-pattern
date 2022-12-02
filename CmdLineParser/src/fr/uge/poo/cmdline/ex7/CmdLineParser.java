@@ -1,8 +1,12 @@
 package fr.uge.poo.cmdline.ex7;
 
+import fr.uge.poo.cmdline.ex6.NoParameterGivenException;
+
 import java.util.*;
+import java.util.function.BiFunction;
 import java.util.function.Consumer;
 import java.util.function.IntConsumer;
+import java.util.stream.Collectors;
 
 public class CmdLineParser {
 
@@ -209,7 +213,9 @@ public class CmdLineParser {
 
     private static class ConflictObserver implements OptionsManagerObserver {
 
-        private final List<Option> options = new ArrayList<>();
+        private final HashSet<Option> seen = new HashSet<>();
+
+        private final HashSet<Option> forbidden = new HashSet<>();
 
         @Override
         public void onRegisteredOption(OptionsManager optionsManager, Option option) {
@@ -218,22 +224,22 @@ public class CmdLineParser {
 
         @Override
         public void onProcessedOption(OptionsManager optionsManager, Option option) {
-            var conflicted = option.getConflicted();
-            var names = option.getAliases();
-            names.add(option.getName());
 
-            options.forEach(opt -> {
-                var conflict = opt.getConflicted();
+            if(forbidden.contains(option)) {
+                throw new ParseException("Conflict from an option: " + option.name);
+            }
 
-                var optNames = opt.getAliases();
-                optNames.add(opt.getName());
+            var conflictOption = option.getConflicted().stream()
+                    .map(optionsManager::processOption)
+                    .filter(Optional::isPresent)
+                    .map(Optional::get)
+                    .collect(Collectors.toSet());
 
-                if(conflict.stream().anyMatch(names::contains) || conflicted.stream().anyMatch(optNames::contains)) {
-                    throw new ParseException("Conflict");
-                }
-            });
-
-            options.add(option);
+            if(conflictOption.stream().anyMatch(seen::contains)) {
+                throw new ParseException("Conflict with an option: " + option.name);
+            }
+            seen.add(option);
+            forbidden.addAll(conflictOption);
         }
 
         @Override
@@ -294,48 +300,59 @@ public class CmdLineParser {
     private final OptionsManager optionsManager;
     private final DocumentationObserver observer;
 
-    public final static ParameterRetrievalStrategy STANDARD = (option, iterator) -> {
-        List<String> args = new ArrayList<>();
-        for(int i = 0; i<option.getArguments(); i++) {
-            if (iterator.hasNext()) {
-                var value = iterator.next();
-                if (value.startsWith("-")) {
-                    throw new ParseException(value + " is not a parameter but an option");
+    public enum ParameterRetrievalStrategies {
+        STANDARD((option, iterator) -> {
+            List<String> args = new ArrayList<>();
+            for(int i = 0; i<option.getArguments(); i++) {
+                if (iterator.hasNext()) {
+                    var value = iterator.next();
+                    if (value.startsWith("-")) {
+                        throw new ParseException(value + " is not a parameter but an option");
+                    }
+                    args.add(value);
+                } else {
+                    throw new ParseException( "Not enough arguments");
                 }
-                args.add(value);
-            } else {
-                throw new ParseException( "Not enough arguments");
             }
-        }
-        return args;
-    };
-    public final static ParameterRetrievalStrategy RELAXED = (option, iterator) -> {
-        List<String> args = new ArrayList<>();
-        for(int i = 0; i<option.getArguments(); i++) {
-            if (iterator.hasNext()) {
-                var value = iterator.next();
-                if (value.startsWith("-")) {
+            return args;
+        }),
+        RELAXED((option, iterator) -> {
+            List<String> args = new ArrayList<>();
+            for(int i = 0; i<option.getArguments(); i++) {
+                if (iterator.hasNext()) {
+                    var value = iterator.next();
+                    if (value.startsWith("-")) {
+                        return args;
+                    }
+                    args.add(value);
+                } else {
                     return args;
                 }
-                args.add(value);
-            } else {
-                return args;
             }
-        }
-        return args;
-    };
-    public final static ParameterRetrievalStrategy OLDSCHOOL = (option, iterator) -> {
-        List<String> args = new ArrayList<>();
-        for(int i = 0; i<option.getArguments(); i++) {
-            if (iterator.hasNext()) {
-                var value = iterator.next();
-                args.add(value);
-            } else {
-                throw new ParseException( "Not enough arguments");
+            return args;
+        }),
+        OLDSCHOOL((option, iterator) -> {
+            List<String> args = new ArrayList<>();
+            for(int i = 0; i<option.getArguments(); i++) {
+                if (iterator.hasNext()) {
+                    var value = iterator.next();
+                    args.add(value);
+                } else {
+                    throw new ParseException( "Not enough arguments");
+                }
             }
+            return args;
+        });
+
+        private ParameterRetrievalStrategy function;
+
+        ParameterRetrievalStrategies(ParameterRetrievalStrategy function) {
         }
-        return args;
-    };
+
+        public ParameterRetrievalStrategy getFunction() {
+            return function;
+        }
+    }
 
     CmdLineParser() {
         this.optionsManager = new OptionsManager();
@@ -377,10 +394,10 @@ public class CmdLineParser {
     }
 
     public List<String> process(List<String> arguments) {
-        return process(arguments, STANDARD);
+        return process(arguments, ParameterRetrievalStrategies.STANDARD);
     }
 
-    public List<String> process(List<String> arguments, ParameterRetrievalStrategy strategy) {
+    public List<String> process(List<String> arguments, ParameterRetrievalStrategies strategy) {
         ArrayList<String> files = new ArrayList<>();
 
         Iterator<String> iterator = arguments.iterator();
@@ -390,7 +407,7 @@ public class CmdLineParser {
             var optOption = optionsManager.processOption(argument);
             if (optOption.isPresent()) {
                 var option = optOption.get();
-                var elements = strategy.retrieve(option, iterator);
+                var elements = strategy.function.retrieve(option, iterator);
                 option.getAction().accept(elements);
             } else {
                 if( argument.startsWith("-") ) {

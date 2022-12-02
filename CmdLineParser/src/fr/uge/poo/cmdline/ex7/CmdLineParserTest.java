@@ -262,7 +262,7 @@ class CmdLineParserTest {
         cmdParser.addOption(optionHosts);
         cmdParser.addFlag("-legacy",()->{});
         String[] arguments = {"-hosts","localhost","-legacy","file"};
-        assertThrows(ParseException.class,()->{cmdParser.process(List.of(arguments),CmdLineParser.STANDARD);});
+        assertThrows(ParseException.class,()->{cmdParser.process(List.of(arguments),CmdLineParser.ParameterRetrievalStrategies.STANDARD);});
     }
 
     @Test
@@ -273,7 +273,7 @@ class CmdLineParserTest {
         cmdParser.addOption(optionHosts);
         cmdParser.addFlag("-legacy",()->{});
         String[] arguments = {"-hosts","localhost","-legacy","file"};
-        cmdParser.process(List.of(arguments),CmdLineParser.RELAXED);
+        cmdParser.process(List.of(arguments),CmdLineParser.ParameterRetrievalStrategies.RELAXED);
         assertEquals(1,hosts.size());
         assertEquals("localhost",hosts.get(0));
     }
@@ -288,7 +288,7 @@ class CmdLineParserTest {
         cmdParser.addOption(optionHosts);
         cmdParser.addFlag("-legacy",()->{});
         String[] arguments = {"-hosts","localhost","-legacy","file"};
-        cmdParser.process(List.of(arguments),CmdLineParser.OLDSCHOOL);
+        cmdParser.process(List.of(arguments),CmdLineParser.ParameterRetrievalStrategies.OLDSCHOOL);
         assertEquals(2,hosts.size());
         assertEquals("localhost",hosts.get(0));
         assertEquals("-legacy",hosts.get(1));
