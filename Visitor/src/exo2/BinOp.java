@@ -34,12 +34,12 @@ public class BinOp implements Expr {
     }
 
     @Override
-    public int eval() {
-        return operator.applyAsInt(left.eval(), right.eval());
+    public String toString() {
+        return "(" + left + ' ' + opName + ' ' + right + ')';
     }
 
     @Override
-    public String toString() {
-        return "(" + left + ' ' + opName + ' ' + right + ')';
+    public int accept(ExprVisitor visitor) {
+        return visitor.visitBinOp(this);
     }
 }

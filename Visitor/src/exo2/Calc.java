@@ -8,6 +8,6 @@ public class Calc {
         Iterator<String> it = Pattern.compile(" ").splitAsStream("+ * 4 + 1 1 + 2 3").iterator();
         Expr expr = Expr.parseExpr(it);
         System.out.println(expr);
-        System.out.println(expr.eval());
+        System.out.println(expr.accept(new EvalExprVisitor()));
     }
 }
