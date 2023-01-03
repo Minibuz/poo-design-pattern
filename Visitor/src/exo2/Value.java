@@ -12,12 +12,7 @@ public class Value implements Expr {
     }
 
     @Override
-    public String toString() {
-        return Integer.toString(value);
-    }
-
-    @Override
-    public int accept(ExprVisitor visitor) {
+    public <E> E accept(ExprVisitor<E> visitor) {
         return visitor.visitValue(this);
     }
 }

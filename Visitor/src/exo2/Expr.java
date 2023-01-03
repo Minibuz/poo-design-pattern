@@ -4,7 +4,7 @@ import java.util.Iterator;
 
 public interface Expr {
 
-    int accept(ExprVisitor visitor);
+    <E> E accept(ExprVisitor<E> visitor);
 
     static Expr parseExpr(Iterator<String> it) {
         if (!it.hasNext()) {

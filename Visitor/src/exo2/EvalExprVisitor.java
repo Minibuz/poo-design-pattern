@@ -1,14 +1,14 @@
 package exo2;
 
-public class EvalExprVisitor implements ExprVisitor {
+public class EvalExprVisitor implements ExprVisitor<Integer> {
 
     @Override
-    public int visitValue(Value value) {
+    public Integer visitValue(Value value) {
         return value.getValue();
     }
 
     @Override
-    public int visitBinOp(BinOp binOp) {
+    public Integer visitBinOp(BinOp binOp) {
         return binOp.getOperator().applyAsInt(binOp.getLeft().accept(this), binOp.getRight().accept(this));
     }
 }

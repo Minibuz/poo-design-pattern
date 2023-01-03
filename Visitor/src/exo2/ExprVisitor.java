@@ -1,7 +1,7 @@
 package exo2;
 
-public interface ExprVisitor {
+public interface ExprVisitor<E> {
 
-    int visitValue(Value value);
-    int visitBinOp(BinOp binOp);
+    E visitValue(Value value);
+    E visitBinOp(BinOp binOp);
 }

@@ -34,12 +34,7 @@ public class BinOp implements Expr {
     }
 
     @Override
-    public String toString() {
-        return "(" + left + ' ' + opName + ' ' + right + ')';
-    }
-
-    @Override
-    public int accept(ExprVisitor visitor) {
+    public <E> E accept(ExprVisitor<E> visitor) {
         return visitor.visitBinOp(this);
     }
 }
